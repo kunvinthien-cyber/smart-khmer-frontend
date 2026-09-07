@@ -51,9 +51,18 @@
 // export default api;
 import axios from 'axios';
 
-// const API_BASE_URL = import.meta.env.VITE_API_URL;
+const configuredApiUrl = import.meta.env.VITE_API_URL?.trim();
+
+const API_BASE_URL = configuredApiUrl
+  ? `${configuredApiUrl.replace(/\/+$/, '').replace(/\/api$/, '')}/api`
+  : null;
+
+if (!API_BASE_URL && import.meta.env.PROD) {
+  throw new Error('VITE_API_URL is not configured for production.');
+}
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api',
+  baseURL: API_BASE_URL || 'http://127.0.0.1:8000/api',
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',

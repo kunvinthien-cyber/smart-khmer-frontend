@@ -46,7 +46,9 @@ const login = async () => {
     router.push('/')
   } catch (error) {
     toastStore.showToast(
-      error.response?.data?.message || 'Unable to sign in. Please check your details.',
+      error.response?.data?.message || (error.request
+        ? 'Cannot connect to the server. Please try again later.'
+        : 'Unable to sign in. Please check your details.'),
       'error'
     )
   } finally {

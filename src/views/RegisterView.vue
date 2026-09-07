@@ -81,7 +81,9 @@ const register = async () => {
     router.push('/')
   } catch (error) {
     toastStore.showToast(
-      error.response?.data?.message || 'Unable to create your account.',
+      error.response?.data?.message || (error.request
+        ? 'Cannot connect to the server. Please try again later.'
+        : 'Unable to create your account.'),
       'error'
     )
   } finally {
