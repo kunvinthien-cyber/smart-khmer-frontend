@@ -1,17 +1,41 @@
 import api from './api'
 import { fallbackCategories, fallbackProducts } from '../data/catalog'
 
-const normalizeProduct = (product) => ({
-  ...product,
-  title: product.title || product.name,
-  price: Number(product.final_price ?? product.price ?? 0),
-  discountPercentage: product.discount_price && product.price
-    ? ((product.price - product.discount_price) / product.price) * 100
-    : 0,
-  category: typeof product.category === 'object'
-    ? product.category?.name
-    : product.category,
-})
+const normalizeImageUrl = (value) => {
+  if (!value) return null
+  if (typeof value === 'string') return value
+  if (typeof value === 'object') {
+    return value.url || value.image_path || value.src || null
+  }
+  return null
+}
+
+const normalizeProduct = (product) => {
+  const productImages = Array.isArray(product.images)
+    ? product.images
+        .map((image) => normalizeImageUrl(image))
+        .filter(Boolean)
+    : []
+
+  const thumbnail = normalizeImageUrl(product.thumbnail)
+    || normalizeImageUrl(product.primary_image)
+    || productImages[0]
+    || null
+
+  return {
+    ...product,
+    title: product.title || product.name,
+    price: Number(product.final_price ?? product.price ?? 0),
+    thumbnail,
+    images: productImages,
+    discountPercentage: product.discount_price && product.price
+      ? ((product.price - product.discount_price) / product.price) * 100
+      : 0,
+    category: typeof product.category === 'object'
+      ? product.category?.name || product.category?.slug
+      : product.category,
+  }
+}
 
 const toProductResponse = (products, params = {}) => {
   const skip = Number(params.skip || 0)

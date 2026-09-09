@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { getCategories } from '../services/productService'
+import { t } from '../i18n'
 
 const router = useRouter()
 
@@ -35,7 +36,7 @@ const fetchCategories = async () => {
     categories.value = normalizeCategories(data)
   } catch (err) {
     console.error(err)
-    error.value = 'Failed to load categories'
+    error.value = t('unableCategories')
   } finally {
     loading.value = false
   }
@@ -73,23 +74,23 @@ onMounted(fetchCategories)
             to="/"
             class="hover:text-green-600"
           >
-            Home
+            {{ t('home') }}
           </RouterLink>
 
           <i class="fa-solid fa-chevron-right text-xs"></i>
 
           <span class="text-gray-900">
-            Categories
+            {{ t('categories') }}
           </span>
 
         </div>
 
         <h1 class="mt-4 text-3xl font-bold text-gray-900">
-          Shop by Category
+          {{ t('shopCategory') }}
         </h1>
 
         <p class="mt-2 text-gray-500">
-          Find products by category.
+          {{ t('findByCategory') }}
         </p>
 
       </div>
@@ -129,7 +130,7 @@ onMounted(fetchCategories)
         ></i>
 
         <h2 class="mt-5 text-xl font-bold text-gray-900">
-          Unable to load categories
+          {{ t('unableCategories') }}
         </h2>
 
         <button
@@ -137,7 +138,7 @@ onMounted(fetchCategories)
           class="mt-5 rounded-lg bg-green-600 px-5 py-3 font-semibold text-white hover:bg-green-700"
         >
           <i class="fa-solid fa-rotate-right mr-2"></i>
-          Try Again
+          {{ t('tryAgain') }}
         </button>
 
       </div>
@@ -180,7 +181,7 @@ onMounted(fetchCategories)
           >
 
             <span>
-              Explore
+              {{ t('explore') }}
             </span>
 
             <i

@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useCartStore } from '../stores/cartStore'
+import { t } from '../i18n'
 
 const cartStore = useCartStore()
 
@@ -30,19 +31,19 @@ const grandTotal = computed(() => {
             to="/"
             class="hover:text-green-600"
           >
-            Home
+            {{ t('home') }}
           </RouterLink>
 
           <i class="fa-solid fa-chevron-right text-xs"></i>
 
           <span class="text-gray-900">
-            Cart
+            {{ t('cart') }}
           </span>
 
         </div>
 
         <h1 class="mt-4 text-3xl font-bold text-gray-900">
-          Shopping Cart
+          {{ t('shoppingCart') }}
         </h1>
 
       </div>
@@ -64,11 +65,11 @@ const grandTotal = computed(() => {
       </div>
 
       <h2 class="mt-6 text-2xl font-bold text-gray-900">
-        Your cart is empty
+        {{ t('emptyCart') }}
       </h2>
 
       <p class="mt-2 text-gray-500">
-        Start shopping and add some products to your cart.
+        {{ t('emptyCartText') }}
       </p>
 
       <RouterLink
@@ -76,7 +77,7 @@ const grandTotal = computed(() => {
         class="mt-6 inline-flex items-center gap-2 rounded-lg bg-green-600 px-6 py-3 font-semibold text-white hover:bg-green-700"
       >
         <i class="fa-solid fa-bag-shopping"></i>
-        Continue Shopping
+        {{ t('continueShopping') }}
       </RouterLink>
 
     </section>
@@ -140,7 +141,7 @@ const grandTotal = computed(() => {
                   <button
                     type="button"
                     class="shrink-0 text-gray-400 hover:text-red-500"
-                    aria-label="Remove item"
+                    :aria-label="t('removeItem')"
                     @click="cartStore.removeFromCart(item.id)"
                   >
                     <i class="fa-solid fa-trash"></i>
@@ -218,7 +219,7 @@ const grandTotal = computed(() => {
               @click="cartStore.clearCart"
             >
               <i class="fa-solid fa-trash-can mr-1"></i>
-              Clear Cart
+              {{ t('clearCart') }}
             </button>
 
           </div>
@@ -233,7 +234,7 @@ const grandTotal = computed(() => {
           <div class="sticky top-24 rounded-2xl border border-gray-200 bg-white p-6">
 
             <h2 class="text-xl font-bold text-gray-900">
-              Order Summary
+              {{ t('orderSummary') }}
             </h2>
 
 
@@ -242,7 +243,7 @@ const grandTotal = computed(() => {
               <div class="flex justify-between text-gray-600">
 
                 <span>
-                  Subtotal
+                  {{ t('subtotal') }}
                 </span>
 
                 <span class="font-medium text-gray-900">
@@ -255,13 +256,13 @@ const grandTotal = computed(() => {
               <div class="flex justify-between text-gray-600">
 
                 <span>
-                  Shipping
+                  {{ t('shipping') }}
                 </span>
 
                 <span class="font-medium text-gray-900">
 
                   <span v-if="shipping === 0">
-                    Free
+                    {{ t('free') }}
                   </span>
 
                   <span v-else>
@@ -278,7 +279,7 @@ const grandTotal = computed(() => {
                 <div class="flex justify-between">
 
                   <span class="font-bold text-gray-900">
-                    Total
+                    {{ t('total') }}
                   </span>
 
                   <span class="text-xl font-bold text-green-600">
@@ -296,7 +297,7 @@ const grandTotal = computed(() => {
               to="/checkout"
               class="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-green-600 px-5 py-3.5 font-semibold text-white hover:bg-green-700"
             >
-              Proceed to Checkout
+              {{ t('checkout') }}
               <i class="fa-solid fa-arrow-right"></i>
             </RouterLink>
 
@@ -306,7 +307,7 @@ const grandTotal = computed(() => {
               class="mt-3 flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 px-5 py-3 font-medium text-gray-700 hover:bg-gray-50"
             >
               <i class="fa-solid fa-arrow-left"></i>
-              Continue Shopping
+              {{ t('continueShopping') }}
             </RouterLink>
 
           </div>

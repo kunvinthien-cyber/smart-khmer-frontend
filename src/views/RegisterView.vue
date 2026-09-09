@@ -3,6 +3,7 @@ import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/authStore'
 import { useToastStore } from '../stores/toastStore'
+import { t } from '../i18n'
 
 defineOptions({
   name: 'RegisterPage',
@@ -33,7 +34,7 @@ const register = async () => {
   ) {
 
     toastStore.showToast(
-      'Please complete all fields',
+      t('completeFields'),
       'error'
     )
 
@@ -44,7 +45,7 @@ const register = async () => {
   if (form.password !== form.confirmPassword) {
 
     toastStore.showToast(
-      'Passwords do not match',
+      t('passwordsMismatch'),
       'error'
     )
 
@@ -52,10 +53,10 @@ const register = async () => {
   }
 
 
-  if (form.password.length < 6) {
+  if (form.password.length < 8) {
 
     toastStore.showToast(
-      'Password must be at least 6 characters',
+      t('passwordLength'),
       'error'
     )
 
@@ -71,19 +72,21 @@ const register = async () => {
 
 
   try {
-    await authStore.register({
+    const response = await authStore.register({
       name: form.name,
       email: form.email,
       password: form.password,
       password_confirmation: form.confirmPassword,
     })
-    toastStore.showToast('Account created successfully!')
-    router.push('/')
+    toastStore.showToast(
+      response?.message || t('registrationSubmitted'),
+    )
+    router.push('/login')
   } catch (error) {
     toastStore.showToast(
       error.response?.data?.message || (error.request
-        ? 'Cannot connect to the server. Please try again later.'
-        : 'Unable to create your account.'),
+        ? t('loginErrorServer')
+        : t('unableCreate')),
       'error'
     )
   } finally {
@@ -126,11 +129,11 @@ const register = async () => {
         <div class="text-center">
 
           <h1 class="text-2xl font-bold text-gray-900">
-            Create Account
+            {{ t('registerTitle') }}
           </h1>
 
           <p class="mt-2 text-sm text-gray-500">
-            Join Smart Khmer Marketplace
+            {{ t('registerSubtitle') }}
           </p>
 
         </div>
@@ -146,13 +149,13 @@ const register = async () => {
           <div>
 
             <label class="mb-2 block text-sm font-medium text-gray-700">
-              Full Name
+              {{ t('fullName') }}
             </label>
 
             <input
               v-model="form.name"
               type="text"
-              placeholder="Your name"
+              :placeholder="t('yourName')"
               class="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100"
             />
 
@@ -164,7 +167,7 @@ const register = async () => {
           <div>
 
             <label class="mb-2 block text-sm font-medium text-gray-700">
-              Email Address
+              {{ t('loginEmail') }}
             </label>
 
             <input
@@ -182,13 +185,13 @@ const register = async () => {
           <div>
 
             <label class="mb-2 block text-sm font-medium text-gray-700">
-              Password
+              {{ t('loginPassword') }}
             </label>
 
             <input
               v-model="form.password"
               type="password"
-              placeholder="Minimum 6 characters"
+              :placeholder="t('passwordMinimum')"
               class="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100"
             />
 
@@ -200,13 +203,13 @@ const register = async () => {
           <div>
 
             <label class="mb-2 block text-sm font-medium text-gray-700">
-              Confirm Password
+              {{ t('confirmPassword') }}
             </label>
 
             <input
               v-model="form.confirmPassword"
               type="password"
-              placeholder="Confirm your password"
+              :placeholder="t('confirmPasswordPlaceholder')"
               class="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100"
             />
 
@@ -231,7 +234,7 @@ const register = async () => {
               class="fa-solid fa-user-plus"
             ></i>
 
-            {{ loading ? 'Creating...' : 'Create Account' }}
+            {{ loading ? t('creating') : t('createAccount') }}
 
           </button>
 
@@ -240,13 +243,13 @@ const register = async () => {
 
         <p class="mt-6 text-center text-sm text-gray-500">
 
-          Already have an account?
+          {{ t('haveAccount') }}
 
           <RouterLink
             to="/login"
             class="font-semibold text-green-600 hover:text-green-700"
           >
-            Sign In
+            {{ t('signIn') }}
           </RouterLink>
 
         </p>

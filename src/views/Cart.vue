@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useCartStore } from '../stores/cartStore'
+import { t } from '../i18n'
 
 defineOptions({
   name: 'CartPage',
@@ -52,19 +53,19 @@ const removeItem = (id) => {
             to="/"
             class="hover:text-green-600"
           >
-            Home
+            {{ t('home') }}
           </RouterLink>
 
           <i class="fa-solid fa-chevron-right text-xs"></i>
 
           <span class="text-gray-900">
-            Shopping Cart
+            {{ t('shoppingCart') }}
           </span>
 
         </div>
 
         <h1 class="mt-4 text-3xl font-bold text-gray-900">
-          Shopping Cart
+          {{ t('shoppingCart') }}
         </h1>
 
       </div>
@@ -86,11 +87,11 @@ const removeItem = (id) => {
       </div>
 
       <h2 class="mt-6 text-2xl font-bold text-gray-900">
-        Your cart is empty
+        {{ t('emptyCart') }}
       </h2>
 
       <p class="mt-2 text-gray-500">
-        Looks like you haven't added anything to your cart yet.
+        {{ t('emptyCartText') }}
       </p>
 
       <RouterLink
@@ -98,7 +99,7 @@ const removeItem = (id) => {
         class="mt-6 inline-flex items-center gap-2 rounded-xl bg-green-600 px-6 py-3 font-semibold text-white hover:bg-green-700"
       >
         <i class="fa-solid fa-bag-shopping"></i>
-        Continue Shopping
+        {{ t('continueShopping') }}
       </RouterLink>
 
     </div>
@@ -127,7 +128,7 @@ const removeItem = (id) => {
             >
 
               <h2 class="font-bold text-gray-900">
-                Cart Items
+                {{ t('cartItems') }}
               </h2>
 
               <span class="text-sm text-gray-500">
@@ -193,7 +194,7 @@ const removeItem = (id) => {
                       <button
                         @click="removeItem(item.id)"
                         class="text-gray-400 hover:text-red-500"
-                        title="Remove item"
+                        :title="t('removeItem')"
                       >
 
                         <i class="fa-solid fa-trash"></i>
@@ -292,7 +293,7 @@ const removeItem = (id) => {
           >
 
             <h2 class="text-xl font-bold text-gray-900">
-              Order Summary
+              {{ t('orderSummary') }}
             </h2>
 
 
@@ -301,7 +302,7 @@ const removeItem = (id) => {
               <div class="flex justify-between text-gray-600">
 
                 <span>
-                  Subtotal
+                  {{ t('subtotal') }}
                 </span>
 
                 <span class="font-medium text-gray-900">
@@ -314,14 +315,14 @@ const removeItem = (id) => {
               <div class="flex justify-between text-gray-600">
 
                 <span>
-                  Delivery
+                  {{ t('delivery') }}
                 </span>
 
                 <span class="font-medium text-gray-900">
 
                   {{
                     deliveryFee === 0
-                      ? 'FREE'
+                      ? t('free').toUpperCase()
                       : `$${deliveryFee.toFixed(2)}`
                   }}
 
@@ -341,7 +342,7 @@ const removeItem = (id) => {
                 <strong>
                   ${{ (50 - subtotal).toFixed(2) }}
                 </strong>
-                more for free delivery.
+                {{ t('freeDeliveryMessage') }}
 
               </div>
 
@@ -351,7 +352,7 @@ const removeItem = (id) => {
                 <div class="flex justify-between">
 
                   <span class="text-lg font-bold text-gray-900">
-                    Total
+                    {{ t('total') }}
                   </span>
 
                   <span class="text-xl font-bold text-green-600">
@@ -374,7 +375,7 @@ const removeItem = (id) => {
 
               <i class="fa-solid fa-lock"></i>
 
-              Proceed to Checkout
+              {{ t('checkout') }}
 
             </RouterLink>
 

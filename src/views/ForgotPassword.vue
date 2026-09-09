@@ -1,6 +1,8 @@
 <script setup>
 import { ref } from 'vue'
 import { useToastStore } from '../stores/toastStore'
+import { t } from '../i18n'
+import api from '../services/api'
 
 defineOptions({
   name: 'ForgotPasswordPage',
@@ -16,7 +18,7 @@ const submit = async () => {
   if (!email.value) {
 
     toastStore.showToast(
-      'Please enter your email',
+      t('loginMissing'),
       'error'
     )
 
@@ -26,15 +28,17 @@ const submit = async () => {
 
   loading.value = true
 
-  await new Promise(resolve => {
-    setTimeout(resolve, 1000)
-  })
-
-  loading.value = false
-
-  toastStore.showToast(
-    'Password reset link sent!'
-  )
+  try {
+    await api.post('/forgot-password', { email: email.value })
+    toastStore.showToast(t('resetSent'))
+  } catch (error) {
+    toastStore.showToast(
+      error.response?.data?.message || t('resetError'),
+      'error',
+    )
+  } finally {
+    loading.value = false
+  }
 }
 </script>
 
@@ -74,11 +78,11 @@ const submit = async () => {
           </div>
 
           <h1 class="mt-5 text-2xl font-bold text-gray-900">
-            Forgot Password?
+            {{ t('forgotPassword') }}
           </h1>
 
           <p class="mt-2 text-sm text-gray-500">
-            Enter your email and we'll send you a reset link.
+            {{ t('resetSubtitle') }}
           </p>
 
         </div>
@@ -92,7 +96,7 @@ const submit = async () => {
           <div>
 
             <label class="mb-2 block text-sm font-medium text-gray-700">
-              Email Address
+              {{ t('loginEmail') }}
             </label>
 
             <input
@@ -121,7 +125,7 @@ const submit = async () => {
               class="fa-solid fa-paper-plane"
             ></i>
 
-            {{ loading ? 'Sending...' : 'Send Reset Link' }}
+            {{ loading ? t('sending') : t('sendReset') }}
 
           </button>
 
@@ -133,7 +137,7 @@ const submit = async () => {
           class="mt-6 flex items-center justify-center gap-2 text-sm font-semibold text-green-600"
         >
           <i class="fa-solid fa-arrow-left"></i>
-          Back to Login
+          {{ t('backLogin') }}
         </RouterLink>
 
       </div>

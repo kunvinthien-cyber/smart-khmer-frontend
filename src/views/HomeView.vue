@@ -1,3 +1,101 @@
+<script setup>
+import { computed, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { t } from '../i18n'
+import { getProducts, getCategories } from '../services/productService'
+import ProductGrid from '../components/product/ProductGrid.vue'
+
+const router = useRouter()
+
+const heroBadge = computed(() => t('heroBadge'))
+const heroTitle1 = computed(() => t('heroTitle1'))
+const heroTitle2 = computed(() => t('heroTitle2'))
+const heroText = computed(() => t('heroText'))
+const heroPrimary = computed(() => t('heroPrimary'))
+const heroSecondary = computed(() => t('heroSecondary'))
+const sectionTag = computed(() => t('sectionCategoryTag'))
+const sectionTitle = computed(() => t('sectionCategoryTitle'))
+const sectionViewAll = computed(() => t('sectionViewAll'))
+const sectionExplore = computed(() => t('sectionExplore'))
+
+const products = ref([])
+const loading = ref(false)
+const error = ref(null)
+
+const fetchProducts = async () => {
+  loading.value = true
+  error.value = null
+
+  try {
+    const data = await getProducts({ limit: 8 })
+    products.value = data.products
+  } catch (err) {
+    error.value = 'Failed to load products.'
+    console.error(err)
+  } finally {
+    loading.value = false
+  }
+}
+
+const categories = ref([])
+const categoriesLoading = ref(false)
+const categoriesError = ref(null)
+
+const fetchCategories = async () => {
+  categoriesLoading.value = true
+  categoriesError.value = null
+
+  try {
+    categories.value = await getCategories()
+  } catch (err) {
+    categoriesError.value = 'Failed to load categories.'
+    console.error(err)
+  } finally {
+    categoriesLoading.value = false
+  }
+}
+
+const openCategory = (category) => {
+  const slug = category.slug || category
+
+  router.push({
+    path: '/products',
+    query: { category: slug },
+  })
+}
+
+const getCategoryIcon = (category) => {
+  const icons = {
+    smartphones: 'fa-solid fa-mobile-screen-button',
+    laptops: 'fa-solid fa-laptop',
+    tablets: 'fa-solid fa-tablet-screen-button',
+    mens_shirts: 'fa-solid fa-shirt',
+    mens_shoes: 'fa-solid fa-shoe-prints',
+    mens_watches: 'fa-solid fa-clock',
+    womens_dresses: 'fa-solid fa-person-dress',
+    womens_shoes: 'fa-solid fa-shoe-prints',
+    womens_watches: 'fa-solid fa-clock',
+    beauty: 'fa-solid fa-wand-magic-sparkles',
+    fragrances: 'fa-solid fa-spray-can-sparkles',
+    furniture: 'fa-solid fa-couch',
+    groceries: 'fa-solid fa-basket-shopping',
+    'home-decoration': 'fa-solid fa-house',
+    'kitchen-accessories': 'fa-solid fa-kitchen-set',
+    'sports-accessories': 'fa-solid fa-dumbbell',
+    sunglasses: 'fa-solid fa-glasses',
+    automotive: 'fa-solid fa-car',
+    motorcycle: 'fa-solid fa-motorcycle',
+  }
+
+  return icons[category] || 'fa-solid fa-layer-group'
+}
+
+onMounted(() => {
+  fetchProducts()
+  fetchCategories()
+})
+</script>
+
 <template>
 
   <div class="bg-gray-50">
@@ -22,17 +120,17 @@
               class="inline-flex items-center rounded-full bg-white/10 px-4 py-2 text-sm font-medium backdrop-blur"
             >
               <i class="fa-solid fa-bolt mr-2"></i>
-              New Collection
+              {{ heroBadge }}
             </span>
 
 
             <h1
               class="mt-5 text-4xl font-extrabold leading-tight sm:text-5xl lg:text-6xl"
             >
-              Shop Smarter.
+              {{ heroTitle1 }}
 
               <span class="block">
-                Live Better.
+                {{ heroTitle2 }}
               </span>
             </h1>
 
@@ -40,8 +138,7 @@
             <p
               class="mt-5 max-w-xl text-base leading-7 text-gray-300 sm:text-lg"
             >
-              Discover quality products at great prices,
-              delivered right to your door.
+              {{ heroText }}
             </p>
 
 
@@ -53,7 +150,7 @@
                 to="/products"
                 class="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 font-bold text-gray-900 transition hover:bg-gray-100"
               >
-                Shop Now
+                {{ heroPrimary }}
 
                 <i class="fa-solid fa-arrow-right"></i>
               </RouterLink>
@@ -63,7 +160,7 @@
                 to="/categories"
                 class="inline-flex items-center gap-2 rounded-xl border border-white/30 px-6 py-3 font-semibold text-white transition hover:bg-white/10"
               >
-                Explore Categories
+                {{ heroSecondary }}
 
                 <i class="fa-solid fa-layer-group"></i>
               </RouterLink>
@@ -114,13 +211,13 @@
           <p
             class="text-sm font-semibold uppercase tracking-wide text-green-600"
           >
-            Shop by Category
+            {{ sectionTag }}
           </p>
 
           <h2
             class="mt-1 text-2xl font-bold text-gray-900 sm:text-3xl"
           >
-            Explore Categories
+            {{ sectionTitle }}
           </h2>
 
         </div>
@@ -130,7 +227,7 @@
           to="/categories"
           class="hidden items-center gap-1 font-semibold text-green-600 hover:text-green-700 sm:inline-flex"
         >
-          View All
+          {{ sectionViewAll }}
 
           <i class="fa-solid fa-arrow-right text-sm"></i>
         </RouterLink>
@@ -205,7 +302,7 @@
           <p
             class="mt-1 text-xs text-gray-400"
           >
-            Explore
+            {{ sectionExplore }}
           </p>
 
         </button>
@@ -454,172 +551,3 @@
   </div>
 
 </template>
-
-
-<script setup>
-
-import { onMounted, ref } from 'vue'
-
-import { useRouter } from 'vue-router'
-
-import {
-  getProducts,
-  getCategories
-} from '../services/productService'
-
-import ProductGrid from '../components/product/ProductGrid.vue'
-
-
-const router = useRouter()
-
-
-/* ==================== PRODUCTS ==================== */
-
-const products = ref([])
-
-const loading = ref(false)
-
-const error = ref(null)
-
-
-const fetchProducts = async () => {
-
-  loading.value = true
-
-  error.value = null
-
-  try {
-
-    const data = await getProducts({
-      limit: 8,
-    })
-
-    products.value = data.products
-
-  } catch (err) {
-
-    error.value = 'Failed to load products.'
-
-    console.error(err)
-
-  } finally {
-
-    loading.value = false
-
-  }
-
-}
-
-
-/* ==================== CATEGORIES ==================== */
-
-const categories = ref([])
-
-const categoriesLoading = ref(false)
-
-const categoriesError = ref(null)
-
-
-const fetchCategories = async () => {
-
-  categoriesLoading.value = true
-
-  categoriesError.value = null
-
-  try {
-
-    categories.value = await getCategories()
-
-  } catch (err) {
-
-    categoriesError.value = 'Failed to load categories.'
-
-    console.error(err)
-
-  } finally {
-
-    categoriesLoading.value = false
-
-  }
-
-}
-
-
-/* ==================== OPEN CATEGORY ==================== */
-
-const openCategory = (category) => {
-
-  const slug = category.slug || category
-
-  router.push({
-    path: '/products',
-    query: {
-      category: slug
-    }
-  })
-
-}
-
-
-/* ==================== CATEGORY ICON ==================== */
-
-const getCategoryIcon = (category) => {
-
-  const icons = {
-
-    smartphones: 'fa-solid fa-mobile-screen-button',
-
-    laptops: 'fa-solid fa-laptop',
-
-    tablets: 'fa-solid fa-tablet-screen-button',
-
-    mens_shirts: 'fa-solid fa-shirt',
-
-    mens_shoes: 'fa-solid fa-shoe-prints',
-
-    mens_watches: 'fa-solid fa-clock',
-
-    womens_dresses: 'fa-solid fa-person-dress',
-
-    womens_shoes: 'fa-solid fa-shoe-prints',
-
-    womens_watches: 'fa-solid fa-clock',
-
-    beauty: 'fa-solid fa-wand-magic-sparkles',
-
-    fragrances: 'fa-solid fa-spray-can-sparkles',
-
-    furniture: 'fa-solid fa-couch',
-
-    groceries: 'fa-solid fa-basket-shopping',
-
-    'home-decoration': 'fa-solid fa-house',
-
-    'kitchen-accessories': 'fa-solid fa-kitchen-set',
-
-    'sports-accessories': 'fa-solid fa-dumbbell',
-
-    sunglasses: 'fa-solid fa-glasses',
-
-    automotive: 'fa-solid fa-car',
-
-    motorcycle: 'fa-solid fa-motorcycle',
-
-  }
-
-  return icons[category] || 'fa-solid fa-layer-group'
-
-}
-
-
-/* ==================== LOAD ==================== */
-
-onMounted(() => {
-
-  fetchProducts()
-
-  fetchCategories()
-
-})
-
-</script>

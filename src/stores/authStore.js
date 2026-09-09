@@ -172,11 +172,17 @@ export const useAuthStore = defineStore('auth', {
         const response = await api.post('/register', formData);
         const { user, token } = response.data.data;
 
-        this.user = user;
-        this.token = token;
+        this.token = token || null;
 
-        localStorage.setItem('auth_token', token);
-        localStorage.setItem('user', JSON.stringify(user));
+        localStorage.removeItem('auth_token');
+        if (token) {
+          this.user = user;
+          localStorage.setItem('auth_token', token);
+          localStorage.setItem('user', JSON.stringify(user));
+        } else {
+          this.user = null;
+          localStorage.removeItem('user');
+        }
 
         return response.data;
       } catch (err) {
@@ -211,6 +217,18 @@ export const useAuthStore = defineStore('auth', {
       } catch {
         this.logout();
       }
+    },
+
+    async updateProfile(updates) {
+      if (!this.user && !this.token) return;
+
+      const response = await api.put('/user/profile', updates);
+      const nextUser = response.data.data;
+
+      this.user = nextUser;
+      localStorage.setItem('user', JSON.stringify(nextUser));
+
+      return response.data;
     }
   }
 });

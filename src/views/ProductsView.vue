@@ -3,6 +3,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import ProductCard from '../components/product/ProductCard.vue'
 import { getProducts } from '../services/productService'
+import { t } from '../i18n'
 
 const route = useRoute()
 
@@ -34,7 +35,7 @@ const fetchProducts = async () => {
 
   } catch (err) {
 
-    error.value = 'Failed to load products'
+    error.value = t('unableProducts')
 
     console.error(err)
 
@@ -252,13 +253,13 @@ onMounted(fetchProducts)
             to="/"
             class="hover:text-green-600"
           >
-            Home
+            {{ t('home') }}
           </RouterLink>
 
           <i class="fa-solid fa-chevron-right text-xs"></i>
 
           <span class="text-gray-900">
-            Products
+            {{ t('products') }}
           </span>
 
         </div>
@@ -267,11 +268,11 @@ onMounted(fetchProducts)
         <div class="mt-4">
 
           <h1 class="text-3xl font-bold text-gray-900">
-            All Products
+            {{ t('allProducts') }}
           </h1>
 
           <p class="mt-2 text-gray-500">
-            Discover products for your everyday needs.
+            {{ t('discoverProducts') }}
           </p>
 
         </div>
@@ -308,7 +309,7 @@ onMounted(fetchProducts)
               v-model="search"
               @input="resetPage"
               type="search"
-              placeholder="Search products..."
+              :placeholder="t('searchProducts')"
               class="w-full rounded-xl border border-gray-300 py-3 pl-11 pr-4 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100"
             />
 
@@ -324,7 +325,7 @@ onMounted(fetchProducts)
           >
 
             <option value="all">
-              All Categories
+              {{ t('allCategories') }}
             </option>
 
             <option
@@ -347,23 +348,23 @@ onMounted(fetchProducts)
           >
 
             <option value="default">
-              Sort: Default
+              {{ t('sortDefault') }}
             </option>
 
             <option value="price-low">
-              Price: Low to High
+              {{ t('priceLow') }}
             </option>
 
             <option value="price-high">
-              Price: High to Low
+              {{ t('priceHigh') }}
             </option>
 
             <option value="rating">
-              Rating
+              {{ t('rating') }}
             </option>
 
             <option value="name">
-              Name: A-Z
+              {{ t('nameAZ') }}
             </option>
 
           </select>
@@ -377,7 +378,7 @@ onMounted(fetchProducts)
 
           <p class="text-sm text-gray-500">
 
-            Showing
+            {{ t('showing') }}
 
             <span class="font-semibold text-gray-900">
               {{ paginatedProducts.length }}
@@ -389,7 +390,7 @@ onMounted(fetchProducts)
               {{ filteredProducts.length }}
             </span>
 
-            products
+            {{ t('products') }}
 
           </p>
 
@@ -405,7 +406,7 @@ onMounted(fetchProducts)
             class="text-sm font-semibold text-green-600 hover:text-green-700"
           >
             <i class="fa-solid fa-rotate-left mr-1"></i>
-            Reset
+            {{ t('reset') }}
           </button>
 
         </div>
@@ -439,7 +440,7 @@ onMounted(fetchProducts)
         <i class="fa-solid fa-triangle-exclamation text-5xl text-red-300"></i>
 
         <h2 class="mt-5 text-xl font-bold text-gray-900">
-          Something went wrong
+          {{ t('somethingWrong') }}
         </h2>
 
         <p class="mt-2 text-gray-500">
@@ -450,7 +451,7 @@ onMounted(fetchProducts)
           @click="fetchProducts"
           class="mt-6 rounded-lg bg-green-600 px-6 py-3 font-semibold text-white hover:bg-green-700"
         >
-          Try Again
+          {{ t('tryAgain') }}
         </button>
 
       </div>
@@ -486,11 +487,11 @@ onMounted(fetchProducts)
         </div>
 
         <h2 class="mt-5 text-xl font-bold text-gray-900">
-          No products found
+          {{ t('noProducts') }}
         </h2>
 
         <p class="mt-2 text-gray-500">
-          Try another search or category.
+          {{ t('tryAnother') }}
         </p>
 
         <button
@@ -502,7 +503,7 @@ onMounted(fetchProducts)
           "
           class="mt-5 rounded-lg bg-green-600 px-5 py-3 font-semibold text-white hover:bg-green-700"
         >
-          Clear Filters
+          {{ t('clearFilters') }}
         </button>
 
       </div>

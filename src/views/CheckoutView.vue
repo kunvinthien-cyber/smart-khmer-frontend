@@ -6,6 +6,7 @@ import { useToastStore } from '../stores/toastStore'
 import { useRouter } from 'vue-router'
 import { useOrderStore } from '../stores/orderStore'
 import api from '../services/api'
+import { t } from '../i18n'
 
 const cartStore = useCartStore()
 const toastStore = useToastStore()
@@ -26,7 +27,7 @@ const stopPaymentPolling = () => {
 
 const completeOrder = (
   orderDetails,
-  message = 'Payment received successfully!',
+  message = t('paymentReceived'),
   serverOrder = {},
 ) => {
   const order = orderStore.createOrder({
@@ -52,7 +53,7 @@ const skipBakongPayment = () => {
   stopPaymentPolling()
   completeOrder(
     pendingPayment.value.orderDetails,
-    'Order placed. Bakong payment is still pending.'
+    t('paymentPending')
     , pendingPayment.value.serverOrder,
   )
 }
@@ -72,7 +73,7 @@ const openPayment = async (serverOrder, orderDetails) => {
         })
         if (statusRes.data.data.is_paid) {
           stopPaymentPolling()
-          completeOrder(orderDetails, 'Payment received successfully!', {
+          completeOrder(orderDetails, t('paymentReceived'), {
             ...serverOrder,
             ...statusRes.data.data,
           })
@@ -83,7 +84,7 @@ const openPayment = async (serverOrder, orderDetails) => {
     }, 3000)
   } catch (error) {
     toastStore.showToast(
-      error.response?.data?.message || 'Unable to create the payment QR code.',
+      error.response?.data?.message || t('unablePaymentQr'),
       'error'
     )
   }
@@ -153,7 +154,7 @@ const placeOrder = async () => {
 
   if (cartStore.items.length === 0) {
     toastStore.showToast(
-      'Your cart is empty',
+      t('emptyCart'),
       'error'
     )
 
@@ -171,7 +172,7 @@ const placeOrder = async () => {
   ) {
 
     toastStore.showToast(
-      'Please complete all required fields',
+      t('requiredFields'),
       'error'
     )
 
@@ -219,7 +220,7 @@ const placeOrder = async () => {
         paymentStatus: response.data.data.payment_status,
       })
       cartStore.clearCart()
-      toastStore.showToast('Order placed successfully!')
+      toastStore.showToast(t('orderPlaced'))
       router.push({ name: 'order-success', query: { order: order.id } })
       return
     }
@@ -227,7 +228,7 @@ const placeOrder = async () => {
     await openPayment(response.data.data, orderDetails)
   } catch (error) {
     toastStore.showToast(
-      error.response?.data?.message || 'Unable to place your order. Please try again.',
+      error.response?.data?.message || t('unableOrder'),
       'error'
     )
   } finally {
@@ -255,7 +256,7 @@ const placeOrder = async () => {
             to="/"
             class="hover:text-green-600"
           >
-            Home
+            {{ t('home') }}
           </RouterLink>
 
           <i class="fa-solid fa-chevron-right text-xs"></i>
@@ -264,20 +265,20 @@ const placeOrder = async () => {
             to="/cart"
             class="hover:text-green-600"
           >
-            Cart
+            {{ t('cart') }}
           </RouterLink>
 
           <i class="fa-solid fa-chevron-right text-xs"></i>
 
           <span class="text-gray-900">
-            Checkout
+            {{ t('checkout') }}
           </span>
 
         </div>
 
 
         <h1 class="mt-4 text-3xl font-bold text-gray-900">
-          Checkout
+          {{ t('checkout') }}
         </h1>
 
       </div>
@@ -301,7 +302,7 @@ const placeOrder = async () => {
       </div>
 
       <h2 class="mt-6 text-2xl font-bold text-gray-900">
-        Your cart is empty
+        {{ t('emptyCart') }}
       </h2>
 
       <RouterLink
@@ -309,7 +310,7 @@ const placeOrder = async () => {
         class="mt-6 inline-flex items-center gap-2 rounded-lg bg-green-600 px-6 py-3 font-semibold text-white hover:bg-green-700"
       >
         <i class="fa-solid fa-bag-shopping"></i>
-        Start Shopping
+        {{ t('startShopping') }}
       </RouterLink>
 
     </section>
@@ -349,11 +350,11 @@ const placeOrder = async () => {
               <div>
 
                 <h2 class="text-xl font-bold text-gray-900">
-                  Customer Information
+                  {{ t('customerInformation') }}
                 </h2>
 
                 <p class="text-sm text-gray-500">
-                  Enter your contact information
+                  {{ t('contactInformation') }}
                 </p>
 
               </div>
@@ -369,13 +370,13 @@ const placeOrder = async () => {
               <div>
 
                 <label class="mb-2 block text-sm font-medium text-gray-700">
-                  First Name *
+                  {{ t('firstName') }}
                 </label>
 
                 <input
                   v-model="form.firstName"
                   type="text"
-                  placeholder="First name"
+                  :placeholder="t('yourName')"
                   class="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-100"
                 />
 
@@ -387,13 +388,13 @@ const placeOrder = async () => {
               <div>
 
                 <label class="mb-2 block text-sm font-medium text-gray-700">
-                  Last Name *
+                  {{ t('lastName') }}
                 </label>
 
                 <input
                   v-model="form.lastName"
                   type="text"
-                  placeholder="Last name"
+                  :placeholder="t('lastName')"
                   class="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-100"
                 />
 
@@ -405,7 +406,7 @@ const placeOrder = async () => {
               <div>
 
                 <label class="mb-2 block text-sm font-medium text-gray-700">
-                  Phone Number *
+                  {{ t('phone') }} *
                 </label>
 
                 <div class="flex">
@@ -419,7 +420,7 @@ const placeOrder = async () => {
                   <input
                     v-model="form.phone"
                     type="tel"
-                    placeholder="12 345 678"
+                    :placeholder="t('phonePlaceholder')"
                     class="w-full rounded-r-lg border border-gray-300 px-4 py-3 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100"
                   />
 
@@ -433,7 +434,7 @@ const placeOrder = async () => {
               <div>
 
                 <label class="mb-2 block text-sm font-medium text-gray-700">
-                  Email
+                  {{ t('loginEmail') }}
                 </label>
 
                 <input
@@ -467,11 +468,11 @@ const placeOrder = async () => {
               <div>
 
                 <h2 class="text-xl font-bold text-gray-900">
-                  Delivery Address
+                  {{ t('deliveryAddress') }}
                 </h2>
 
                 <p class="text-sm text-gray-500">
-                  Where should we deliver your order?
+                  {{ t('addressHelp') }}
                 </p>
 
               </div>
@@ -487,7 +488,7 @@ const placeOrder = async () => {
               <div>
 
                 <label class="mb-2 block text-sm font-medium text-gray-700">
-                  Province / City *
+                  {{ t('provinceCity') }}
                 </label>
 
                 <select
@@ -496,7 +497,7 @@ const placeOrder = async () => {
                 >
 
                   <option value="">
-                    Select province
+                    {{ t('selectProvince') }}
                   </option>
 
                   <option
@@ -517,13 +518,13 @@ const placeOrder = async () => {
               <div>
 
                 <label class="mb-2 block text-sm font-medium text-gray-700">
-                  District / Khan *
+                  {{ t('districtKhan') }}
                 </label>
 
                 <input
                   v-model="form.district"
                   type="text"
-                  placeholder="District / Khan"
+                  :placeholder="t('districtKhan')"
                   class="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100"
                 />
 
@@ -535,13 +536,13 @@ const placeOrder = async () => {
               <div class="sm:col-span-2">
 
                 <label class="mb-2 block text-sm font-medium text-gray-700">
-                  Full Address *
+                  {{ t('fullAddress') }}
                 </label>
 
                 <textarea
                   v-model="form.address"
                   rows="3"
-                  placeholder="House number, street, village..."
+                  :placeholder="t('addressPlaceholder')"
                   class="w-full resize-none rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100"
                 ></textarea>
 
@@ -553,13 +554,13 @@ const placeOrder = async () => {
               <div class="sm:col-span-2">
 
                 <label class="mb-2 block text-sm font-medium text-gray-700">
-                  Delivery Note
+                  {{ t('deliveryNote') }}
                 </label>
 
                 <textarea
                   v-model="form.note"
                   rows="2"
-                  placeholder="Example: Please call before delivery"
+                  :placeholder="t('deliveryNote')"
                   class="w-full resize-none rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100"
                 ></textarea>
 
@@ -587,7 +588,7 @@ const placeOrder = async () => {
               <div>
 
                 <h2 class="text-xl font-bold text-gray-900">
-                  Delivery Method
+                  {{ t('deliveryMethod') }}
                 </h2>
 
               </div>
@@ -621,11 +622,11 @@ const placeOrder = async () => {
                   <div>
 
                     <p class="font-semibold text-gray-900">
-                      Standard Delivery
+                      {{ t('standardDelivery') }}
                     </p>
 
                     <p class="text-sm text-gray-500">
-                      2–4 business days
+                      {{ t('businessDays24') }}
                     </p>
 
                   </div>
@@ -662,11 +663,11 @@ const placeOrder = async () => {
                   <div>
 
                     <p class="font-semibold text-gray-900">
-                      Express Delivery
+                      {{ t('expressDelivery') }}
                     </p>
 
                     <p class="text-sm text-gray-500">
-                      1–2 business days
+                      {{ t('businessDays12') }}
                     </p>
 
                   </div>
@@ -701,11 +702,11 @@ const placeOrder = async () => {
               <div>
 
                 <h2 class="text-xl font-bold text-gray-900">
-                  Payment Method
+                  {{ t('paymentMethod') }}
                 </h2>
 
                 <p class="text-sm text-gray-500">
-                  Choose how you want to pay
+                  {{ t('choosePayment') }}
                 </p>
 
               </div>
@@ -739,11 +740,11 @@ const placeOrder = async () => {
                 <div>
 
                   <p class="font-semibold text-gray-900">
-                    Cash on Delivery
+                    {{ t('cashDelivery') }}
                   </p>
 
                   <p class="text-sm text-gray-500">
-                    Pay when your order arrives
+                    {{ t('payArrival') }}
                   </p>
 
                 </div>
@@ -774,11 +775,11 @@ const placeOrder = async () => {
                 <div>
 
                   <p class="font-semibold text-gray-900">
-                    Bakong / KHQR
+                    {{ t('bakongKhqr') }}
                   </p>
 
                   <p class="text-sm text-gray-500">
-                    Pay securely using KHQR
+                    {{ t('payKhqr') }}
                   </p>
 
                 </div>
@@ -809,11 +810,11 @@ const placeOrder = async () => {
                 <div>
 
                   <p class="font-semibold text-gray-900">
-                    Credit / Debit Card
+                    {{ t('card') }}
                   </p>
 
                   <p class="text-sm text-gray-500">
-                    Visa, Mastercard
+                    {{ t('visaMastercard') }}
                   </p>
 
                 </div>
@@ -836,7 +837,7 @@ const placeOrder = async () => {
           <div class="sticky top-24 rounded-2xl border bg-white p-6">
 
             <h2 class="text-xl font-bold text-gray-900">
-              Order Summary
+              {{ t('orderSummary') }}
             </h2>
 
 
@@ -906,7 +907,7 @@ const placeOrder = async () => {
               <div class="flex justify-between text-gray-600">
 
                 <span>
-                  Subtotal
+                  {{ t('subtotal') }}
                 </span>
 
                 <span>
@@ -919,13 +920,13 @@ const placeOrder = async () => {
               <div class="flex justify-between text-gray-600">
 
                 <span>
-                  Delivery
+                  {{ t('delivery') }}
                 </span>
 
                 <span>
 
                   <span v-if="shipping === 0">
-                    Free
+                    {{ t('free') }}
                   </span>
 
                   <span v-else>
@@ -947,7 +948,7 @@ const placeOrder = async () => {
             <div class="flex items-center justify-between">
 
               <span class="text-lg font-bold text-gray-900">
-                Total
+                {{ t('total') }}
               </span>
 
               <span class="text-2xl font-bold text-green-600">
@@ -977,7 +978,7 @@ const placeOrder = async () => {
               ></i>
 
               <span>
-                {{ submitting ? 'Processing...' : 'Place Order' }}
+                {{ submitting ? t('processing') : t('placeOrder') }}
               </span>
 
             </button>
@@ -988,7 +989,7 @@ const placeOrder = async () => {
               <i class="fa-solid fa-shield-halved mt-0.5"></i>
 
               <p>
-                Your order information is securely handled.
+                {{ t('secureOrder') }}
               </p>
 
             </div>
@@ -1011,12 +1012,12 @@ const placeOrder = async () => {
       <div class="w-full max-w-sm rounded-2xl bg-white p-6 text-center shadow-2xl">
         <div class="flex items-center justify-between">
           <h2 id="payment-dialog-title" class="text-xl font-bold text-gray-900">
-            Complete payment
+            {{ t('completePayment') }}
           </h2>
           <button
             type="button"
             class="flex h-9 w-9 items-center justify-center rounded-full text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-            aria-label="Close payment dialog"
+            :aria-label="t('cancel')"
             @click="stopPaymentPolling(); showPaymentModal = false"
           >
             <i class="fa-solid fa-xmark"></i>
@@ -1024,7 +1025,7 @@ const placeOrder = async () => {
         </div>
 
         <p class="mt-2 text-sm text-gray-500">
-          Scan this QR code with your banking app.
+            {{ t('scanQr') }}
         </p>
 
         <img
@@ -1044,11 +1045,11 @@ const placeOrder = async () => {
           class="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-green-600 px-4 py-3 font-bold text-white hover:bg-green-700"
         >
           <i class="fa-solid fa-building-columns"></i>
-          Open banking app
+          {{ t('openBanking') }}
         </a>
 
         <p class="mt-4 text-xs text-gray-500">
-          Waiting for payment confirmation...
+          {{ t('waitingPayment') }}
         </p>
 
         <button
@@ -1056,7 +1057,7 @@ const placeOrder = async () => {
           class="mt-4 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50"
           @click="skipBakongPayment"
         >
-          Skip Bakong payment for now
+          {{ t('skipPayment') }}
         </button>
       </div>
     </div>

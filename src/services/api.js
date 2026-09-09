@@ -62,7 +62,7 @@ if (!API_BASE_URL && import.meta.env.PROD) {
 }
 
 const api = axios.create({
-  baseURL: API_BASE_URL || 'http://127.0.0.1:8000/api',
+  baseURL: API_BASE_URL || 'https://smart-khmer-backend.onrender.com/api',
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',

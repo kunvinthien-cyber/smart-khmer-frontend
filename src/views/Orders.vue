@@ -4,6 +4,7 @@ import { onMounted, ref } from 'vue'
 import { useOrderStore } from '../stores/orderStore'
 import { useToastStore } from '../stores/toastStore'
 import api from '../services/api'
+import { t } from '../i18n'
 
 defineOptions({
   name: 'OrdersPage',
@@ -75,11 +76,11 @@ const submitCancellation = async () => {
       reason,
     })
     orderStore.updateOrder(order.id, { status: response.data.data.status })
-    toastStore.showToast('Order cancelled successfully.')
+    toastStore.showToast(t('orderCancelled'))
     closeCancellationPopup()
   } catch (error) {
     toastStore.showToast(
-      error.response?.data?.message || 'Unable to cancel this order.',
+      error.response?.data?.message || t('unableCancel'),
       'error',
     )
   } finally {
@@ -93,10 +94,10 @@ const confirmReceived = async (order) => {
   try {
     const response = await api.post(`/orders/${order.id}/confirm-received`)
     orderStore.updateOrder(order.id, { status: response.data.data.status })
-    toastStore.showToast('Order marked as completed.')
+    toastStore.showToast(t('orderCompleted'))
   } catch (error) {
     toastStore.showToast(
-      error.response?.data?.message || 'Unable to confirm this order.',
+      error.response?.data?.message || t('unableConfirm'),
       'error',
     )
   } finally {
@@ -135,19 +136,19 @@ const formatDate = (date) => {
             to="/"
             class="hover:text-green-600"
           >
-            Home
+            {{ t('home') }}
           </RouterLink>
 
           <i class="fa-solid fa-chevron-right text-xs"></i>
 
           <span class="text-gray-900">
-            My Orders
+            {{ t('myOrders') }}
           </span>
 
         </div>
 
         <h1 class="mt-4 text-3xl font-bold text-gray-900">
-          My Orders
+          {{ t('myOrders') }}
         </h1>
 
       </div>
@@ -169,11 +170,11 @@ const formatDate = (date) => {
       </div>
 
       <h2 class="mt-6 text-2xl font-bold text-gray-900">
-        No orders yet
+        {{ t('noOrders') }}
       </h2>
 
       <p class="mt-2 text-gray-500">
-        Your orders will appear here after checkout.
+        {{ t('ordersEmptyText') }}
       </p>
 
       <RouterLink
@@ -181,7 +182,7 @@ const formatDate = (date) => {
         class="mt-6 inline-flex items-center gap-2 rounded-lg bg-green-600 px-6 py-3 font-semibold text-white hover:bg-green-700"
       >
         <i class="fa-solid fa-bag-shopping"></i>
-        Start Shopping
+        {{ t('startShopping') }}
       </RouterLink>
 
     </section>
@@ -211,7 +212,7 @@ const formatDate = (date) => {
             <div>
 
               <p class="text-sm text-gray-500">
-                Order Number
+                {{ t('orderNumber') }}
               </p>
 
               <p class="mt-1 font-bold text-gray-900">
@@ -243,7 +244,7 @@ const formatDate = (date) => {
             <div>
 
               <p class="text-sm text-gray-500">
-                Total
+                {{ t('total') }}
               </p>
 
               <p class="mt-1 text-lg font-bold text-green-600">
@@ -264,7 +265,7 @@ const formatDate = (date) => {
               }"
               class="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50"
             >
-              View Details
+              {{ t('viewDetails') }}
               <i class="fa-solid fa-arrow-right"></i>
             </RouterLink>
 
@@ -275,7 +276,7 @@ const formatDate = (date) => {
               :disabled="busyOrderId === order.id"
               @click="cancelOrder(order)"
             >
-              Cancel order
+              {{ t('cancelOrder') }}
             </button>
 
             <button
@@ -285,7 +286,7 @@ const formatDate = (date) => {
               :disabled="busyOrderId === order.id"
               @click="confirmReceived(order)"
             >
-              Confirm received
+              {{ t('confirmReceived') }}
             </button>
 
           </div>
@@ -313,16 +314,16 @@ const formatDate = (date) => {
       <div class="flex items-start justify-between gap-4">
         <div>
           <h2 id="cancel-order-title" class="text-xl font-bold text-gray-900">
-            Cancel order
+            {{ t('cancelTitle') }}
           </h2>
           <p class="mt-1 text-sm text-gray-500">
-            Please tell us why you want to cancel this order.
+            {{ t('cancelPrompt') }}
           </p>
         </div>
         <button
           type="button"
           class="flex h-9 w-9 items-center justify-center rounded-full text-gray-500 hover:bg-gray-100"
-          aria-label="Close cancellation popup"
+          :aria-label="t('cancelTitle')"
           @click="closeCancellationPopup"
         >
           <i class="fa-solid fa-xmark"></i>
@@ -330,7 +331,7 @@ const formatDate = (date) => {
       </div>
 
       <label class="mt-5 block text-sm font-semibold text-gray-700" for="cancellation-reason">
-        Cancellation reason
+        {{ t('cancelReason') }}
       </label>
       <textarea
         id="cancellation-reason"
@@ -338,7 +339,7 @@ const formatDate = (date) => {
         rows="4"
         maxlength="500"
         required
-        placeholder="Enter your reason..."
+        :placeholder="t('cancelPlaceholder')"
         class="mt-2 w-full resize-none rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100"
       ></textarea>
 
@@ -349,14 +350,14 @@ const formatDate = (date) => {
           :disabled="busyOrderId === cancellationOrder.id"
           @click="closeCancellationPopup"
         >
-          Keep order
+          {{ t('keepOrder') }}
         </button>
         <button
           type="submit"
           class="rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
           :disabled="!cancellationReason.trim() || busyOrderId === cancellationOrder.id"
         >
-          {{ busyOrderId === cancellationOrder.id ? 'Cancelling...' : 'Confirm cancellation' }}
+          {{ busyOrderId === cancellationOrder.id ? t('cancelling') : t('confirmCancellation') }}
         </button>
       </div>
     </form>

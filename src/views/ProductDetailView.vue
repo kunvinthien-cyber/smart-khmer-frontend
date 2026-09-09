@@ -8,6 +8,10 @@ import { useCartStore } from '../stores/cartStore'
 import { useWishlistStore } from '../stores/wishlistStore'
 
 import ProductCard from '../components/product/ProductCard.vue'
+import { t } from '../i18n'
+import { useAuthStore } from '../stores/authStore'
+import { useToastStore } from '../stores/toastStore'
+import api from '../services/api'
 
 
 const route = useRoute()
@@ -15,6 +19,8 @@ const router = useRouter()
 
 const cartStore = useCartStore()
 const wishlistStore = useWishlistStore()
+const authStore = useAuthStore()
+const toastStore = useToastStore()
 
 
 const product = ref(null)
@@ -25,6 +31,9 @@ const error = ref(null)
 
 const quantity = ref(1)
 const selectedImage = ref('')
+const reviewRating = ref(5)
+const reviewComment = ref('')
+const reviewSaving = ref(false)
 
 
 // ========================================
@@ -68,7 +77,7 @@ const fetchProduct = async () => {
     console.error(err)
 
     error.value =
-      'Unable to load this product.'
+      t('productNotFound')
 
   } finally {
 
@@ -140,6 +149,39 @@ const toggleWishlist = () => {
 
 }
 
+const submitReview = async () => {
+  if (!product.value || !authStore.isAuthenticated) {
+    router.push({ name: 'login', query: { redirect: route.fullPath } })
+    return
+  }
+
+  reviewSaving.value = true
+
+  try {
+    const response = await api.post(`/products/${product.value.id}/reviews`, {
+      rating: reviewRating.value,
+      comment: reviewComment.value.trim() || null,
+    })
+    const savedReview = response.data.data
+    const existingReviewIndex = (product.value.reviews || []).findIndex(
+      (review) => review.user?.id === authStore.user?.id,
+    )
+
+    if (existingReviewIndex >= 0) {
+      product.value.reviews[existingReviewIndex] = savedReview
+    } else {
+      product.value.reviews = [savedReview, ...(product.value.reviews || [])]
+    }
+    product.value.rating = product.value.reviews.reduce((sum, review) => sum + review.rating, 0) / product.value.reviews.length
+    reviewComment.value = ''
+    toastStore.showToast(t('reviewSaved'))
+  } catch (error) {
+    toastStore.showToast(error.response?.data?.message || t('reviewError'), 'error')
+  } finally {
+    reviewSaving.value = false
+  }
+}
+
 
 const isInWishlist = computed(() => {
 
@@ -209,7 +251,7 @@ watch(
       ></i>
 
       <h1 class="mt-5 text-2xl font-bold text-gray-900">
-        Product Not Found
+        {{ t('productNotFound') }}
       </h1>
 
       <p class="mt-2 text-gray-500">
@@ -221,7 +263,7 @@ watch(
         class="mt-6 inline-flex items-center gap-2 rounded-lg bg-green-600 px-6 py-3 font-semibold text-white hover:bg-green-700"
       >
         <i class="fa-solid fa-arrow-left"></i>
-        Back to Products
+        {{ t('backProducts') }}
       </RouterLink>
 
     </div>
@@ -242,7 +284,7 @@ watch(
           to="/"
           class="hover:text-green-600"
         >
-          Home
+          {{ t('home') }}
         </RouterLink>
 
         <i class="fa-solid fa-chevron-right text-xs"></i>
@@ -251,7 +293,7 @@ watch(
           to="/products"
           class="hover:text-green-600"
         >
-          Products
+          {{ t('products') }}
         </RouterLink>
 
         <i class="fa-solid fa-chevron-right text-xs"></i>
@@ -365,7 +407,7 @@ watch(
             <span class="text-gray-300">|</span>
 
             <span class="text-sm text-gray-500">
-              {{ product.reviews?.length || 0 }} Reviews
+              {{ product.reviews?.length || 0 }} {{ t('reviews') }}
             </span>
 
           </div>
@@ -416,7 +458,7 @@ watch(
             ></i>
 
             <span class="font-medium text-gray-700">
-              {{ product.stock }} items available
+              {{ product.stock }} {{ t('itemsAvailable') }}
             </span>
 
           </div>
@@ -427,7 +469,7 @@ watch(
           <div class="mt-6">
 
             <p class="mb-2 text-sm font-semibold text-gray-700">
-              Quantity
+              {{ t('quantity') }}
             </p>
 
             <div
@@ -471,7 +513,7 @@ watch(
 
               <i class="fa-solid fa-cart-plus"></i>
 
-              Add to Cart
+              {{ t('addToCartTitle') }}
 
             </button>
 
@@ -483,7 +525,7 @@ watch(
 
               <i class="fa-solid fa-bolt"></i>
 
-              Buy Now
+              {{ t('buyNow') }}
 
             </button>
 
@@ -512,8 +554,8 @@ watch(
 
             {{
               isInWishlist
-                ? 'Remove from Wishlist'
-                : 'Add to Wishlist'
+                ? t('removeWishlist')
+                : t('addWishlist')
             }}
 
           </button>
@@ -530,11 +572,11 @@ watch(
               <div>
 
                 <p class="text-sm font-semibold">
-                  Fast Delivery
+                  {{ t('fastDelivery') }}
                 </p>
 
                 <p class="text-xs text-gray-500">
-                  Across Cambodia
+                  {{ t('acrossCambodia') }}
                 </p>
 
               </div>
@@ -549,11 +591,11 @@ watch(
               <div>
 
                 <p class="text-sm font-semibold">
-                  Secure Shopping
+                  {{ t('secureShopping') }}
                 </p>
 
                 <p class="text-xs text-gray-500">
-                  Safe & reliable
+                  {{ t('safeReliable') }}
                 </p>
 
               </div>
@@ -572,13 +614,59 @@ watch(
       <section class="mt-10 rounded-2xl border bg-white p-6 shadow-sm md:p-8">
 
         <h2 class="text-xl font-bold text-gray-900">
-          Product Description
+          {{ t('productDescription') }}
         </h2>
 
         <p class="mt-4 leading-8 text-gray-600">
           {{ product.description }}
         </p>
 
+      </section>
+
+      <section class="mt-10 rounded-2xl border bg-white p-6 shadow-sm md:p-8">
+        <h2 class="text-xl font-bold text-gray-900">{{ t('customerReviews') }}</h2>
+
+        <div v-if="authStore.isAuthenticated" class="mt-5 rounded-xl bg-gray-50 p-5">
+          <h3 class="font-semibold text-gray-900">{{ t('writeReview') }}</h3>
+          <p class="mt-3 text-sm font-medium text-gray-700">{{ t('yourRating') }}</p>
+          <div class="mt-2 flex gap-1">
+            <button
+              v-for="star in 5"
+              :key="star"
+              type="button"
+              class="text-2xl transition hover:scale-110"
+              :class="star <= reviewRating ? 'text-yellow-400' : 'text-gray-300'"
+              :aria-label="`${star} stars`"
+              @click="reviewRating = star"
+            >
+              <i class="fa-solid fa-star"></i>
+            </button>
+          </div>
+          <label class="mt-4 block text-sm font-medium text-gray-700">
+            {{ t('reviewComment') }}
+            <textarea v-model="reviewComment" rows="3" :placeholder="t('reviewPlaceholder')" class="mt-2 w-full resize-none rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100"></textarea>
+          </label>
+          <button type="button" class="mt-4 inline-flex items-center gap-2 rounded-lg bg-green-600 px-5 py-3 font-semibold text-white hover:bg-green-700 disabled:opacity-60" :disabled="reviewSaving" @click="submitReview">
+            <i v-if="reviewSaving" class="fa-solid fa-spinner fa-spin"></i>
+            <i v-else class="fa-solid fa-paper-plane"></i>
+            {{ reviewSaving ? t('reviewSaving') : t('submitReview') }}
+          </button>
+        </div>
+        <RouterLink v-else to="/login" class="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-green-600">
+          <i class="fa-regular fa-user"></i>
+          {{ t('loginToReview') }}
+        </RouterLink>
+
+        <div v-if="product.reviews?.length" class="mt-6 space-y-4">
+          <article v-for="review in product.reviews" :key="review.id" class="border-t border-gray-100 pt-4">
+            <div class="flex items-center justify-between gap-3">
+              <p class="font-semibold text-gray-900">{{ review.user?.name || t('customer') }}</p>
+              <div class="flex gap-0.5 text-sm text-yellow-400"><i v-for="star in 5" :key="star" class="fa-solid fa-star" :class="star > review.rating ? 'text-gray-300' : ''"></i></div>
+            </div>
+            <p v-if="review.comment" class="mt-2 text-sm leading-6 text-gray-600">{{ review.comment }}</p>
+          </article>
+        </div>
+        <p v-else class="mt-6 text-sm text-gray-500">{{ t('noReviews') }}</p>
       </section>
 
 
@@ -594,11 +682,11 @@ watch(
           <div>
 
             <p class="text-sm font-semibold text-green-600">
-              YOU MAY ALSO LIKE
+              {{ t('youMayLike') }}
             </p>
 
             <h2 class="mt-1 text-2xl font-bold text-gray-900">
-              Related Products
+              {{ t('relatedProducts') }}
             </h2>
 
           </div>
@@ -607,7 +695,7 @@ watch(
             to="/products"
             class="hidden text-sm font-semibold text-green-600 sm:block"
           >
-            View All
+            {{ t('sectionViewAll') }}
             <i class="fa-solid fa-arrow-right ml-1"></i>
           </RouterLink>
 

@@ -3,6 +3,7 @@ import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/authStore'
 import { useToastStore } from '../stores/toastStore'
+import { t } from '../i18n'
 
 defineOptions({
   name: 'LoginPage',
@@ -25,7 +26,7 @@ const login = async () => {
   if (!form.email || !form.password) {
 
     toastStore.showToast(
-      'Please enter your email and password',
+      t('loginMissing'),
       'error'
     )
 
@@ -42,13 +43,13 @@ const login = async () => {
 
   try {
     await authStore.login(form.email, form.password)
-    toastStore.showToast('Welcome back!')
+    toastStore.showToast(t('loginWelcome'))
     router.push('/')
   } catch (error) {
     toastStore.showToast(
       error.response?.data?.message || (error.request
-        ? 'Cannot connect to the server. Please try again later.'
-        : 'Unable to sign in. Please check your details.'),
+        ? t('loginErrorServer')
+        : t('loginErrorGeneral')),
       'error'
     )
   } finally {
@@ -91,11 +92,11 @@ const login = async () => {
         <div class="text-center">
 
           <h1 class="text-2xl font-bold text-gray-900">
-            Welcome Back
+            {{ t('loginTitle') }}
           </h1>
 
           <p class="mt-2 text-sm text-gray-500">
-            Sign in to continue shopping
+            {{ t('loginSubtitle') }}
           </p>
 
         </div>
@@ -111,7 +112,7 @@ const login = async () => {
           <div>
 
             <label class="mb-2 block text-sm font-medium text-gray-700">
-              Email Address
+              {{ t('loginEmail') }}
             </label>
 
             <div class="relative">
@@ -139,14 +140,14 @@ const login = async () => {
             <div class="mb-2 flex justify-between">
 
               <label class="text-sm font-medium text-gray-700">
-                Password
+                {{ t('loginPassword') }}
               </label>
 
               <RouterLink
                 to="/forgot-password"
                 class="text-sm font-medium text-green-600 hover:text-green-700"
               >
-                Forgot Password?
+                {{ t('loginForgot') }}
               </RouterLink>
 
             </div>
@@ -187,7 +188,7 @@ const login = async () => {
               class="fa-solid fa-right-to-bracket"
             ></i>
 
-            {{ loading ? 'Signing in...' : 'Sign In' }}
+            {{ loading ? '...' : t('loginSubmit') }}
 
           </button>
 
@@ -198,13 +199,13 @@ const login = async () => {
 
         <p class="mt-6 text-center text-sm text-gray-500">
 
-          Don't have an account?
+          {{ t('loginNoAccount') }}
 
           <RouterLink
             to="/register"
             class="font-semibold text-green-600 hover:text-green-700"
           >
-            Create Account
+            {{ t('loginCreate') }}
           </RouterLink>
 
         </p>

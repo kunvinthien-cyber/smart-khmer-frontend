@@ -1,6 +1,7 @@
 
 <script setup>
 import { useWishlistStore } from '../stores/wishlistStore'
+import { t } from '../i18n'
 
 const wishlistStore = useWishlistStore()
 </script>
@@ -22,13 +23,13 @@ const wishlistStore = useWishlistStore()
             to="/"
             class="hover:text-green-600"
           >
-            Home
+            {{ t('home') }}
           </RouterLink>
 
           <i class="fa-solid fa-chevron-right text-xs"></i>
 
           <span class="text-gray-900">
-            Wishlist
+            {{ t('wishlist') }}
           </span>
 
         </div>
@@ -36,7 +37,7 @@ const wishlistStore = useWishlistStore()
         <div class="mt-4 flex items-center gap-3">
 
           <h1 class="text-3xl font-bold text-gray-900">
-            My Wishlist
+            {{ t('myWishlist') }}
           </h1>
 
           <span
@@ -66,11 +67,11 @@ const wishlistStore = useWishlistStore()
       </div>
 
       <h2 class="mt-6 text-2xl font-bold text-gray-900">
-        Your wishlist is empty
+        {{ t('emptyWishlist') }}
       </h2>
 
       <p class="mt-2 text-gray-500">
-        Save products you love and find them here later.
+        {{ t('emptyWishlistText') }}
       </p>
 
       <RouterLink
@@ -78,7 +79,7 @@ const wishlistStore = useWishlistStore()
         class="mt-6 inline-flex items-center gap-2 rounded-lg bg-green-600 px-6 py-3 font-semibold text-white hover:bg-green-700"
       >
         <i class="fa-solid fa-bag-shopping"></i>
-        Explore Products
+        {{ t('exploreProducts') }}
       </RouterLink>
 
     </section>
@@ -99,7 +100,7 @@ const wishlistStore = useWishlistStore()
           @click="wishlistStore.clearWishlist"
         >
           <i class="fa-solid fa-trash-can mr-1"></i>
-          Clear Wishlist
+          {{ t('clearWishlist') }}
         </button>
 
       </div>
@@ -120,7 +121,7 @@ const wishlistStore = useWishlistStore()
           <button
             type="button"
             class="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white text-red-500 shadow-sm hover:bg-red-50"
-            aria-label="Remove from wishlist"
+            :aria-label="t('removeWishlist')"
             @click="wishlistStore.removeFromWishlist(item.id)"
           >
             <i class="fa-solid fa-heart"></i>
@@ -175,7 +176,7 @@ const wishlistStore = useWishlistStore()
               class="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-3 font-semibold text-white hover:bg-green-700"
             >
               <i class="fa-solid fa-cart-plus"></i>
-              View Product
+              {{ t('viewProduct') }}
             </RouterLink>
 
           </div>

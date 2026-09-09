@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useOrderStore } from '../stores/orderStore'
 import api from '../services/api'
+import { t } from '../i18n'
 
 const route = useRoute()
 const orderStore = useOrderStore()
@@ -54,11 +55,11 @@ onMounted(async () => {
         </div>
 
         <h1 class="mt-6 text-3xl font-bold text-gray-900">
-          Order Placed Successfully!
+          {{ t('orderSuccess') }}
         </h1>
 
         <p class="mt-3 text-gray-500">
-          Thank you for shopping with Smart Khmer Marketplace.
+          {{ t('thankYou') }}
         </p>
 
       </div>
@@ -77,7 +78,7 @@ onMounted(async () => {
           <div>
 
             <p class="text-sm text-gray-500">
-              Order Number
+              {{ t('orderNumber') }}
             </p>
 
             <p class="mt-1 text-xl font-bold text-gray-900">
@@ -104,7 +105,7 @@ onMounted(async () => {
           <div class="flex justify-between text-gray-600">
 
             <span>
-              Items
+              {{ t('items') }}
             </span>
 
             <span class="font-medium text-gray-900">
@@ -117,7 +118,7 @@ onMounted(async () => {
           <div class="flex justify-between text-gray-600">
 
             <span>
-              Subtotal
+              {{ t('subtotal') }}
             </span>
 
             <span>
@@ -130,13 +131,13 @@ onMounted(async () => {
           <div class="flex justify-between text-gray-600">
 
             <span>
-              Delivery
+              {{ t('delivery') }}
             </span>
 
             <span>
               {{
                 order.shipping === 0
-                  ? 'FREE'
+                  ? t('free').toUpperCase()
                   : '$' + order.shipping.toFixed(2)
               }}
             </span>
@@ -149,7 +150,7 @@ onMounted(async () => {
             <div class="flex justify-between">
 
               <span class="font-bold text-gray-900">
-                Total
+                {{ t('total') }}
               </span>
 
               <span class="text-xl font-bold text-green-600">
@@ -174,7 +175,7 @@ onMounted(async () => {
             <div>
 
               <p class="text-sm text-gray-500">
-                Payment Method
+                {{ t('paymentMethod') }}
               </p>
 
               <p class="font-semibold capitalize text-gray-900">
@@ -199,7 +200,7 @@ onMounted(async () => {
           class="flex flex-1 items-center justify-center gap-2 rounded-xl bg-green-600 px-5 py-3.5 font-semibold text-white hover:bg-green-700"
         >
           <i class="fa-solid fa-box"></i>
-          View My Orders
+          {{ t('viewMyOrders') }}
         </RouterLink>
 
 
@@ -208,7 +209,7 @@ onMounted(async () => {
           class="flex flex-1 items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-5 py-3.5 font-semibold text-gray-700 hover:bg-gray-50"
         >
           <i class="fa-solid fa-bag-shopping"></i>
-          Continue Shopping
+          {{ t('continueShopping') }}
         </RouterLink>
 
       </div>
@@ -226,14 +227,14 @@ onMounted(async () => {
       <i class="fa-solid fa-circle-exclamation text-5xl text-gray-300"></i>
 
       <h2 class="mt-5 text-2xl font-bold text-gray-900">
-        Order not found
+        {{ t('orderNotFound') }}
       </h2>
 
       <RouterLink
         to="/"
         class="mt-6 inline-flex rounded-lg bg-green-600 px-6 py-3 font-semibold text-white"
       >
-        Back to Home
+        {{ t('backHome') }}
       </RouterLink>
 
     </section>
