@@ -1,44 +1,131 @@
-# bakong-shop-frontend
+# 🇰🇭 Smart Khmer Marketplace
 
-This template should help get you started developing with Vue 3 in Vite.
+A modern Cambodian e-commerce frontend designed to provide a simple and user-friendly online shopping experience.
 
-## Recommended IDE Setup
+## 🌐 Live Demo
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+🔗 **Live Website:** https://khmaket.vercel.app
 
-## Recommended Browser Setup
+## 📌 Overview
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+**Smart Khmer Marketplace** is a frontend e-commerce project focused on creating a modern online shopping experience for Cambodian users.
 
-## Customize configuration
+The project was developed with **Vue.js** and **Vite**, with a responsive interface designed for both desktop and mobile users.
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+## ✨ Features
 
-## Project Setup
+* 🛍️ Product browsing
+* 🔎 Product search
+* 🗂️ Product categories
+* 📄 Product details
+* 🛒 Shopping cart
+* 📱 Responsive design
+* 🔄 API-based product data
+* ⚡ Fast Vite development workflow
+* 🌐 Production deployment with Vercel
 
-```sh
+## 🛠️ Tech Stack
+
+| Technology   | Usage                    |
+| ------------ | ------------------------ |
+| Vue 3        | Frontend framework       |
+| Vite         | Build tool               |
+| JavaScript   | Application logic        |
+| Tailwind CSS | UI styling               |
+| REST API     | Product/data integration |
+| Axios        | HTTP requests            |
+| ESLint       | Code quality             |
+| Prettier     | Code formatting          |
+| Git & GitHub | Version control          |
+| Vercel       | Deployment               |
+
+## 📂 Project Structure
+
+```text
+smart-khmer-frontend/
+├── public/
+│   └── IMG/
+├── src/
+├── .env.example
+├── .env.production
+├── eslint.config.js
+├── package.json
+├── vite.config.js
+└── README.md
+```
+
+## ⚙️ Installation
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/kunvinthien-cyber/smart-khmer-frontend.git
+cd smart-khmer-frontend
+```
+
+### 2. Install dependencies
+
+```bash
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+### 3. Configure environment variables
 
-```sh
+Create your local environment file:
+
+```bash
+cp .env.example .env
+```
+
+Configure the required API URL according to your backend environment.
+
+### 4. Start development server
+
+```bash
 npm run dev
 ```
 
-### Compile and Minify for Production
+### 5. Build for production
 
-```sh
+```bash
 npm run build
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+### 6. Run lint
 
-```sh
+```bash
 npm run lint
 ```
+
+## 🔌 Backend Integration
+
+The frontend is designed to communicate with a backend through REST APIs.
+
+The architecture allows the frontend and backend to be deployed separately, making it easier to maintain and scale the application.
+
+## 🎯 Project Goals
+
+This project demonstrates my experience with:
+
+* Vue.js frontend development
+* Responsive UI development
+* E-commerce user flows
+* REST API integration
+* Environment configuration
+* Component-based development
+* Frontend deployment
+* Git and GitHub workflow
+
+## 👨‍💻 Author
+
+**Kun Vinthien**
+
+Junior Front-End Developer | Computer Science Graduate
+
+* GitHub: https://github.com/kunvinthien-cyber
+* Portfolio: https://thienweb.vercel.app
+* LinkedIn: https://www.linkedin.com/in/kun-vinthien-830a1a404/
+
+---
+
+⭐ If you like this project, consider giving it a star!
